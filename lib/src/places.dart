@@ -566,12 +566,20 @@ class PlacesAutocompleteResponse extends GoogleResponseStatus {
       String status, String errorMessage, this.predictions)
       : super(status, errorMessage);
 
+  static List<Prediction> _predictions(List list) {
+    List<Prediction> predictions = [];
+    for(Map ob in list) {
+      predictions.add(new Prediction.fromJson(ob));
+    }
+    return predictions;
+  }
+
   factory PlacesAutocompleteResponse.fromJson(Map json) => json != null
       ? new PlacesAutocompleteResponse(
           json["status"],
           json["error_message"],
-          json["predictions"].map((p) => new Prediction.fromJson(p)).toList()
-              as List<Prediction>)
+          _predictions(json["predictions"]),
+          )
       : null;
 }
 
@@ -591,18 +599,43 @@ class Prediction {
   Prediction(this.description, this.id, this.terms, this.placeId,
       this.reference, this.types, this.matchedSubstrings);
 
+
+  static List<MatchedSubstring> _matchedSubstrings(List list) {
+    List<MatchedSubstring> matchedSubstrings = [];
+    for(Map ob in list) {
+      matchedSubstrings.add(new MatchedSubstring.fromJson(ob));
+    }
+    return matchedSubstrings;
+  }
+
+  static List<Term> _terms(List list) {
+    List<Term> terms = [];
+    for(Map ob in list) {
+      terms.add(new Term.fromJson(ob));
+    }
+    return terms;
+  }
+
+  static List<String> _types(List list) {
+    List<String> strings = [];
+    for(String ob in list) {
+      strings.add(ob);
+    }
+    return strings;
+  }
+
+
+
   factory Prediction.fromJson(Map json) => json != null
       ? new Prediction(
           json["description"],
           json["id"],
-          json["terms"]?.map((t) => new Term.fromJson(t))?.toList()
-              as List<Term>,
+          _terms(json["terms"]),
           json["place_id"],
           json["reference"],
-          json["types"] as List<String>,
-          json["matched_substrings"]
-              ?.map((m) => new MatchedSubstring.fromJson(m))
-              ?.toList() as List<MatchedSubstring>)
+          _types(json["types"]),
+          _matchedSubstrings(json["matched_substrings"]),
+          )
       : null;
 }
 
